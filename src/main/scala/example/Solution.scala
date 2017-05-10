@@ -49,10 +49,16 @@ object Solution {
     }
 
     // based on Manacher's algorithm
+    // returns number of values that have been filled based on previous values
     def fillKnownValues() : Int = {
       var k = 1
+      // repeat while we are still under current palindrome (that of center in i)
+      // and palindrome of center in i - k doesn't end exactly where current palindrome
       while (k < R(i) && R(i - k) != R(i) - k) {
-        R(i + k) = math.min(R(i - k), R(i) - k)
+        if (R(i - k) < R(i) - k) // ends within the current
+          R(i + k) = R(i - k)
+        else // ends outside of current
+          R(i + k) = R(i) - k
         k += 1
       }
       k
