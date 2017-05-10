@@ -28,10 +28,10 @@ object Solution {
           radius += 1
         
         R(i) = radius
-        val (knownValuesCount, filledAll) = fillKnownValues()
+        val (filledCount, preserveRadius) = fillKnownRadiuses()
         
-        radius = if (filledAll) 0 else R(i) - (1 + knownValuesCount)
-        i += 1 + knownValuesCount
+        radius = if (preserveRadius) R(i) - (1 + filledCount) else 0
+        i += 1 + filledCount
       }
     }
 
@@ -48,22 +48,22 @@ object Solution {
         input.charAt(leftIndex) == input.charAt(rightIndex)
     }
 
-    // based on Manacher's algorithm
-    // returns number of values that have been filled based on previous values
-    // and boolean that indicates if all values under current palindrome have been filled
-    def fillKnownValues() : (Int, Boolean) = {
+    // fills next radiuses based on previous
+    // returns number of radiuses that have been filled
+    // and boolean that is true when found palindrome that potentially ends outside of current palindrome
+    def fillKnownRadiuses() : (Int, Boolean) = {
       var k = 1
       // repeat while we are still under current palindrome (that of center in i)
       while (k < R(i)) {
         if (R(i - k) == R(i) - k) // palindrome of center in i - k ends exactly where current palindrome
-          return (k - 1, false)
+          return (k - 1, true)
         if (R(i - k) < R(i) - k) // ends within the current
           R(i + k) = R(i - k)
         else // ends outside of current
           R(i + k) = R(i) - k
         k += 1
       }
-      (k - 1, true)
+      (k - 1, false)
     }
 
     calculate()
